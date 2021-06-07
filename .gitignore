@@ -1,0 +1,13 @@
+# Ignore only the top-level dist directory
+/dist
+/build
+.tern-port
+.sass-cache
+.DS_Store
+manifest.json
+node_modules
+/readkit.epub/html
+/readkit.epub/manifest.json
+/data
+package-lock.json
+*.sublime-*
