@@ -9,5 +9,4 @@ node_modules
 /readkit.epub/html
 /readkit.epub/manifest.json
 /data
-package-lock.json
 *.sublime-*
