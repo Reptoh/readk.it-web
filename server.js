@@ -8,7 +8,7 @@ const PORT = 8080;
 const HOST = '0.0.0.0';
 
 var fs = require('fs');
-var dir = 'data/';
+var dir = 'data/input/';
 
 if (!fs.existsSync(dir)){
     fs.mkdirSync(dir);
