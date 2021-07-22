@@ -477,10 +477,6 @@ body .navbar-brand {
   padding-top: 2.4rem !important;
 }
 
-.sidebar-sticky {
-  padding-top: 1.2rem !important;
-}
-
 /* Form */
 label {
   font-weight: 500;
@@ -596,6 +592,12 @@ body .table thead th {
   max-width: 150px;
 }
 
+@media (min-width: 576px) {
+  .ml-sm-auto, .mx-sm-auto {
+      margin-left: auto!important;
+  }
+}
+
 /* Responsive */
 @media(max-width:767px) {
   .sidebar {
@@ -632,7 +634,7 @@ body .table thead th {
   }
 
   .sidebar-sticky {
-    padding-top: 1.9rem !important;
+    padding-top: 20px !important;
     height: auto;
   }
 
@@ -677,7 +679,7 @@ body .table thead th {
   }
 
   .sidebar {
-    padding: 40px 0 0;
+    padding: 0px 0 0;
   }
 
   footer br {
