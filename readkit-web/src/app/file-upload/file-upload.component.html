@@ -11,17 +11,7 @@
         <mat-icon>attach_file</mat-icon>
 
     </button>
-
-</div>
-
-<div class="progress">
-
-  <mat-progress-bar class="progress-bar" mode="determinate"
-                    [value]="uploadProgress" *ngIf="uploadProgress">
-
-  </mat-progress-bar>
-
-  <mat-icon class="cancel-upload" (click)="cancelUpload()" 
-            *ngIf="uploadProgress">delete_forever</mat-icon>
+    <div *ngIf="isShowBusy" class="spinner-border text-primary"></div>
+    <a *ngIf="link" (click)="openLink()" class="link">Your link for downloading</a>
 
 </div>
