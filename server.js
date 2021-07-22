@@ -68,13 +68,7 @@ function onFileupload(req, res) {
 					    });
 
 							var readStream = fs.createReadStream(outputDir + files[0]);
-							    // We replaced all the event handlers with a simple call to readStream.pipe()
-					    readStream.pipe(res);
-
-					    //res.end();
-					    //res.send(files[0]);
-					    //res.download(outputDir + files[0]);
-					    //res.send({ filename: files[0]});
+							readStream.pipe(res);
 					});
 			  }
 		});

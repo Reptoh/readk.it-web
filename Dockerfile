@@ -39,6 +39,7 @@ RUN npm install -g grunt
 
 COPY --from=ui-build /usr/src/app/readkit-web/dist ./readkit-web/dist
 COPY package*.json ./
+COPY Gruntfile*.js ./
 
 
 RUN npm install
