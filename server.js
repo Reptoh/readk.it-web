@@ -55,19 +55,31 @@ function onFileupload(req, res) {
 		  console.log(`child process exited with code ${code}`);
 		  if(code === 0) {
 		  	fs.readdir(outputDir, function (err, files) {
+		  				var file = null;
+
+		  				for(var i=0;i<files.length;i++){
+					        var filename=path.join(outputDir,files[i]);
+					        var stat = fs.lstatSync(filename);
+					        if (filename.indexOf('zip')>=0) {
+					            console.log('-- found: ',filename);
+					            file = files[i];
+					        };
+					    };
 					    //handling error
-					    if (err) {
+					    if (err && !file) {
 					        return console.log('Unable to scan directory: ' + err);
 					    }
-					    var stat = fs.statSync(outputDir + files[0]);
-					    console.log('result path  ' + outputDir + files[0]);
+					    
+
+					    var stat = fs.statSync(outputDir + file);
+					    console.log('result path  ' + file);
 					    res.writeHead(200, {
 					        'Content-Type': 'application/zip',
 					        'Content-Length': stat.size,
-					        'Content-disposition': 'attachment; filename=' + files[0]
+					        'Content-disposition': 'attachment; filename=' + file
 					    });
 
-							var readStream = fs.createReadStream(outputDir + files[0]);
+							var readStream = fs.createReadStream(outputDir + file);
 							readStream.pipe(res);
 					});
 			  }

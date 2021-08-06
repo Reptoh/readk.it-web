@@ -128,11 +128,13 @@ define([
         if (location.protocol === 'file:' || !$('#readkit-pageScroller .readkit-page').length) {
             // We don't want to show the drag and drop dialogue if the use has
             // double-clicked a readkit solo publication.
-            if (!/readkit.solo/.test(location.href)) {
-                if (!$('.readkit-drag-upload-window').is(':visible')) {
-                    upload.initalise();
-                }
-            }
+
+            // Dmitry: temporary disabled
+            // if (!/readkit.solo/.test(location.href)) {
+            //     if (!$('.readkit-drag-upload-window').is(':visible')) {
+            //         upload.initalise();
+            //     }
+            // }
         }
     }
 
