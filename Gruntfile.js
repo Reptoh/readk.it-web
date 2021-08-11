@@ -68,7 +68,8 @@ module.exports = function(grunt) {
       before: [
         'dist',
         'build',
-        '.sass-cache'
+        '.sass-cache',
+        'data/output/*'
       ],
       build_readkit: [
         'build/readkit'
@@ -80,7 +81,8 @@ module.exports = function(grunt) {
       after: [
         'build',
         '.sass-cache',
-        'data/input/*.epub'
+        'data/input/*.epub',
+        'data/input/*'
       ]
     },
 
