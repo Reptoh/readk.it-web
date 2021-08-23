@@ -680,3 +680,9 @@ pre {
   cursor: pointer;
   margin-right: 5px;
 }
+
+/*Temporary fix for styles*/
+.readkit-margins div > div:first-child > ._idGenObjectAttribute-1 {
+  position: relative;
+  z-index: 10;
+}

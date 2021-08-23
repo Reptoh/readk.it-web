@@ -70,6 +70,8 @@ module.exports = function(grunt) {
         'build',
         '.sass-cache',
         'data/output/*'
+        
+        // 'readkit.epub/OEBPS/css/*'
       ],
       build_readkit: [
         'build/readkit'
@@ -82,7 +84,14 @@ module.exports = function(grunt) {
         'build',
         '.sass-cache',
         'data/input/*.epub',
-        'data/input/*'
+        'data/input/*',
+        // 'readkit.epub/image/',
+        // 'readkit.epub/META-INF/',
+        // 'readkit.epub/OEBPS/',
+        // 'readkit.epub/mimetype',
+        // 'readkit.epub/manifest.json',
+        // 'readkit.epub/**/*',
+        // '!readkit.epub/manifest.maker.py',
       ]
     },
 
