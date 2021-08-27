@@ -211,13 +211,28 @@ define([
     };
 
     var nav = function (f, epub, callback) {
-        $(f).find('li a').each(function() {
+
+        var included_navs = null;
+
+        var el = $( '<div></div>' );
+        el.html(f);
+
+        if( $('#toc', el).find('li a').length > 1 ) {
+            included_navs = $('#toc', el).find('li a');
+        } else {
+            included_navs = $(el).find('li a');
+        }
+
+        included_navs.each(function(nav_item) {
+            var current_nav = $(nav_item);
+            var href_string = current_nav.attr('href');
             var href = $(this).attr('href');
             var file = href.replace(/\//g, '_');
             file = file.replace(/#.*/g, '');
             var filtered_spine_entries = epub.spine_entries.filter(function (item) {
                 return item.file === file;
             });
+
             if (filtered_spine_entries[0]) {
                 filtered_spine_entries[0]['title'] = $(this).text();
             }

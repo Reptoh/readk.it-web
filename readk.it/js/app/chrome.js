@@ -427,6 +427,10 @@ define([
         });
         html += navs;
 
+        if(navs.length < 2) {
+            $('.readkit-bookmark.readkit-slider').remove();
+        }
+
         html = utility.compile(input + $('#readkit-bookmark-widget-tmpl').html(),
             {html: html}
         );
