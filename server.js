@@ -23,7 +23,7 @@ const app = express();
 app.use(fileUpload());
 app.use(express.static(process.cwd()+"/readkit-web/dist/readkit-web/"));
 
-app.get('/', (req,res) => {
+app.get('/*', (req,res) => {
   res.sendFile(process.cwd()+"/readkit-web/dist/readkit-web/index.html")
 });
 

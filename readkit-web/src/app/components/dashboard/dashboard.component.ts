@@ -16,6 +16,12 @@ export class DashboardComponent implements OnInit {
     public ngZone: NgZone
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  	console.log("this.authService.isLoggedIn", this.authService.isLoggedIn);
+  	const user = JSON.parse(localStorage.getItem('user')!);
+  	if(!user || user === null) {
+  		this.router.navigate(['sign-in']);
+  	}
+  }
 
 }
