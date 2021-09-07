@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { CdkStepperModule } from '@angular/cdk/stepper';
 
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
@@ -21,6 +23,8 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 import { AuthService } from "./shared/services/auth.service";
+import { SharedDataService } from "./shared/services/sharedData.service";
+
 import { AppRoutingModule } from './shared/routing/app-routing.module';
 
 @NgModule({
@@ -37,16 +41,21 @@ import { AppRoutingModule } from './shared/routing/app-routing.module';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatStepperModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
   ],
-  providers: [AuthService],
+  providers: [
+              AuthService, 
+              SharedDataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

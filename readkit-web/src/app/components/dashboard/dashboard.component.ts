@@ -1,6 +1,12 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
 import { AuthService } from "../../shared/services/auth.service";
 import { Router } from "@angular/router";
+import { MatStepper } from '@angular/material/stepper';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 
 @Component({
@@ -10,10 +16,19 @@ import { Router } from "@angular/router";
 })
 export class DashboardComponent implements OnInit {
 
+	@ViewChild('stepper') private myStepper!: MatStepper;
+
+	metaData: any;
+	isShowBusy: boolean = false;
+	link!: string;
+	convertSub: any;
+
   constructor(
     public authService: AuthService,
     public router: Router,
-    public ngZone: NgZone
+    public ngZone: NgZone,
+    private http: HttpClient,
+    private _formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -22,6 +37,50 @@ export class DashboardComponent implements OnInit {
   	if(!user || user === null) {
   		this.router.navigate(['sign-in']);
   	}
+
+  }
+
+  setMeta(meta:any) {
+  	this.metaData = meta;
+  	this.myStepper.next();
+  }
+
+  openLink() {
+	  window.open(this.link); 
+  }
+
+  convert() {
+  	this.myStepper.next();
+  	this.isShowBusy = true;
+  	const convert$ = this.http.post("/api/convert", new FormData(), {
+		responseType: 'arraybuffer'
+			})
+			.pipe(
+				finalize(() => {
+					this.isShowBusy = false;
+					// this.reset();
+				})
+			);
+
+			this.convertSub = convert$.subscribe((data: any) => {
+				console.log('convert data', data);
+				// this.reset();
+				const blob = new Blob([data], {
+					type: 'application/zip'
+			 	});
+				const url = window.URL.createObjectURL(blob);
+				this.link = url;
+				window.open(url); 
+			})
+  }
+
+  cancelUpload() {
+	this.convertSub.unsubscribe();
+	this.reset();
+  }
+
+  reset() {
+	this.convertSub = null;
   }
 
 }

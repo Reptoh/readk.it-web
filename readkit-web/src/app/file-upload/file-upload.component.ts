@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { SharedDataService } from '../shared/services/sharedData.service'
+
 
 
 @Component({
@@ -15,6 +17,9 @@ export class FileUploadComponent {
 	@Input()
 	requiredFileType:string = '';
 
+	@Output()
+	metadataUpdateEvent = new EventEmitter<any>();
+
 	fileName = '';
 	uploadProgress:any = 0;
 	uploadSub: any;
@@ -22,7 +27,8 @@ export class FileUploadComponent {
 	link!: string;
 	uploadedFileName!: string;
 
-	constructor(private http: HttpClient) {}
+	constructor(private http: HttpClient,
+				private sharedData: SharedDataService) {}
 
 	onFileSelected(event:any) {
 		console.log('onFileSelected',event);
@@ -35,7 +41,7 @@ export class FileUploadComponent {
 			this.isShowBusy = true;
 
 			const upload$ = this.http.post("/api/upload", formData, {
-				responseType: 'arraybuffer'
+				responseType: 'json'
 			})
 			.pipe(
 				finalize(() => {
@@ -46,13 +52,15 @@ export class FileUploadComponent {
 
 			this.uploadSub = upload$.subscribe((data: any) => {
 				console.log('data', data);
-				this.reset();
-				const blob = new Blob([data], {
-					type: 'application/zip'
-			 	});
-				const url = window.URL.createObjectURL(blob);
-				this.link = url;
-				window.open(url); 
+				this.sharedData.setMetadata(data);
+				this.metadataUpdateEvent.emit(data);
+				// this.reset();
+				// const blob = new Blob([data], {
+				// 	type: 'application/zip'
+			 // 	});
+				// const url = window.URL.createObjectURL(blob);
+				// this.link = url;
+				// window.open(url); 
 			})
 
 
@@ -69,7 +77,7 @@ export class FileUploadComponent {
 	this.uploadSub = null;
   }
 
-  openLink() {
-	  window.open(this.link); 
-  }
+  // openLink() {
+	 //  window.open(this.link); 
+  // }
 }

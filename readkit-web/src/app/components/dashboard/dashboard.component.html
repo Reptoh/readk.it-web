@@ -29,23 +29,54 @@
 
     <!-- Main content -->
     <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
-      <div class="inner-adjust">
 
-        <div class="pt-2 pb-2 mb-3 border-bottom">
-          <h1 class="h2">File converter</h1>
-        </div>
-        <!-- Show user data when logged in -->
-        <div class="row" *ngIf="authService.userData as user">
-          <div class="col-md-12">
-            <div class="media">
-              <div class="media-body">
-                <file-upload></file-upload>
+      <mat-stepper linear #stepper>
+        <!-- Upload step -->
+        <mat-step>
+          <ng-template matStepLabel>Upload file</ng-template>
+          <div class="inner-adjust">
+            <!-- <div class="pt-2 pb-2 mb-3 border-bottom">
+              <h1 class="h2">File converter</h1>
+            </div> -->
+            <!-- Show user data when logged in -->
+            <div class="row" *ngIf="authService.userData as user">
+              <div class="col-md-12">
+                <div class="media">
+                  <div class="media-body">
+                    <file-upload (metadataUpdateEvent)="setMeta($event)"></file-upload>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-      </div>
+          </div>
+        </mat-step>
+        <!-- Meta step -->
+        <mat-step>
+          <ng-template matStepLabel>Metadata</ng-template>
+          <div class="container metadata" *ngIf="metaData">
+            <h3>EPUB INFORMATION(Not Editable)</h3>
+            <div class="jumbotron">
+              <div *ngFor="let item of metaData | keyvalue ">
+                <span *ngIf="item.key !== 'cover'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
+              </div>
+            </div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button class="btn btn-success" (click)="convert()">Convert</button>
+          </div>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Done</ng-template>
+          <div class="last-step">
+            <p *ngIf="link">You are now done.</p>
+            <div *ngIf="isShowBusy" class="spinner-border text-primary"></div>
+            <a *ngIf="link" (click)="openLink()" class="link">Your link for downloading</a>
+            <div>
+              <button mat-button (click)="stepper.reset()">Reset</button>
+            </div>
+          </div>
+        </mat-step>
+      </mat-stepper>
     </main>
 
   </div>
