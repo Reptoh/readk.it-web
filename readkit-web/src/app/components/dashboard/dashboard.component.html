@@ -55,7 +55,7 @@
         <mat-step>
           <ng-template matStepLabel>Metadata</ng-template>
           <div class="container metadata" *ngIf="metaData">
-            <h3>EPUB INFORMATION(Not Editable)</h3>
+            <h3>EPUB INFORMATION (Not Editable)</h3>
             <div class="jumbotron">
               <div *ngFor="let item of metaData | keyvalue ">
                 <span *ngIf="item.key !== 'cover'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
