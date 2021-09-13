@@ -35,9 +35,10 @@
   "license": "BSD",
   "readmeFilename": "README.md",
   "dependencies": {
-    "epub-metadata-parser": "^1.1.14",
+    "epub-metadata-parser": "git+https://github.com/Reptoh/epub-metadata-parser.git#master",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "grunt-zip": "^0.18.2"
+    "grunt-zip": "^0.18.2",
+    "xml-js": "^1.6.11"
   }
 }
