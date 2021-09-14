@@ -68,9 +68,9 @@
         <mat-step>
           <ng-template matStepLabel>Done</ng-template>
           <div class="last-step">
-            <p *ngIf="link">You are now done.</p>
+            <p *ngIf="link && !isShowBusy">You are now done.</p>
             <div *ngIf="isShowBusy" class="spinner-border text-primary"></div>
-            <a *ngIf="link" (click)="openLink()" class="link">Your link for downloading</a>
+            <a *ngIf="link && !isShowBusy" (click)="openLink()" class="link">Your link for downloading</a>
             <div>
               <button mat-button (click)="stepper.reset()">Reset</button>
             </div>

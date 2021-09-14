@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
 
 	metaData: any;
 	isShowBusy: boolean = false;
-	link!: string;
+	link!: string | null;
 	convertSub: any;
 
   constructor(
@@ -46,7 +46,9 @@ export class DashboardComponent implements OnInit {
   }
 
   openLink() {
+  	if(this.link) {
 	  window.open(this.link); 
+  	}
   }
 
   convert() {
@@ -80,6 +82,7 @@ export class DashboardComponent implements OnInit {
   }
 
   reset() {
+  	this.link = null;
 	this.convertSub = null;
   }
 
