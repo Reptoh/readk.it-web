@@ -6,6 +6,11 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const epubParser = require('epub-metadata-parser');
+var xml2js = require("xml2js");
+var _ = require("lodash");
+var mkdirp = require("mkdirp");
+var yauzl = require("yauzl");
+var parser = new xml2js.Parser();
 
 // Constants
 const PORT = 8080;
@@ -29,6 +34,7 @@ app.get('/*', (req,res) => {
 });
 
 app.route('/api/upload').post(onFileupload);
+app.route('/api/reset').post(onReset);
 
 app.route('/api/convert').post(convert);
 
@@ -70,8 +76,8 @@ function convert(req, res) {
 				        'Content-disposition': 'attachment; filename=' + file
 				    });
 
-						var readStream = fs.createReadStream(outputDir + file);
-						readStream.pipe(res);
+					var readStream = fs.createReadStream(outputDir + file);
+					readStream.pipe(res);
 				});
 		  }
 	});
@@ -101,15 +107,71 @@ function onFileupload(req, res) {
 		child.on('close', (code) => {
 		  console.log(`child process exited with code ${code}`);
 		  if(code === 0) {
-		  	epubParser.parse(inputDir + file.name, '/readkit.epub/' , book => {
-			    console.log(book);
-			    res.setHeader('Content-Type', 'application/json');
-			    res.end(JSON.stringify(book));
+
+		  	epubParser.parse(inputDir + file.name, 'readkit.epub/' , book => {
+		  		getNavType().then(result => {
+		  			book.toc = result;
+		  			console.log(book);
+				    res.setHeader('Content-Type', 'application/json');
+				    res.end(JSON.stringify(book));
+		  		});
 			});
 		  }
 		});
 	}
   });
+}
+
+function onReset(req, res) {
+  	var child = spawn('grunt', ['clean:after'], { shell: true });
+  	child.stdout.on('data', (data) => {
+	  console.log(`stdout: ${data}`);
+	});
+	  
+	child.stderr.on('data', (data) => {
+	  console.error(`stderr: ${data}`);
+	});
+	  
+	child.on('close', (code) => {
+	  console.log(`child process exited with code ${code}`);
+	  if(code === 0) {
+	  	res.setHeader('Content-Type', 'application/json');
+	    res.sendStatus(200);
+	    res.end();
+	  }
+	});
+}
+
+function getNavType() {
+	return new Promise(function (resolve, reject) {
+	  fs
+	    .readFile("./readkit.epub/OEBPS/toc.xhtml", function (err, data) {
+	      if (err) 
+	        return reject(err);
+	      parser
+	        .parseString(data, function (err, result) {
+	          try {
+	            var jsondata = JSON.parse(JSON.stringify(result));
+	            var toc = _.filter(jsondata.html.body[0].nav, (i) => i["$"]["epub:type"] === "toc");
+	            var pageList = _.filter(jsondata.html.body[0].nav, (i) => i["$"]["epub:type"] === "page-list");
+
+	            if(toc[0].ol[0].li.length > 1) {
+	            	return resolve('Index');
+	            }
+	            if(!toc[0].ol[0].li.length || toc[0].ol[0].li.length <= 1
+	            							&& pageList[0].ol[0].li.length > 1) {
+	            	return resolve('Page-list');
+	            }
+	            if(!toc[0].ol[0].li.length || toc[0].ol[0].li.length <= 1
+	            							&& pageList[0].ol[0].li.length <= 1) {
+	            	return resolve('None');
+	            }
+	    	  } catch (err) {
+	            return reject(err)
+	          }
+	        });
+	    });
+	});
 }
 
 app.listen(PORT, HOST);

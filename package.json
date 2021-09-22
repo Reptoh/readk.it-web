@@ -39,6 +39,10 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "grunt-zip": "^0.18.2",
-    "xml-js": "^1.6.11"
+    "lodash": "^4.17.21",
+    "mkdirp": "^1.0.4",
+    "xml-js": "^1.6.11",
+    "xml2js": "^0.4.23",
+    "yauzl": "^2.10.0"
   }
 }

@@ -81,9 +81,24 @@ export class DashboardComponent implements OnInit {
 	this.reset();
   }
 
+  back() {
+  	this.reset();
+  }
+
   reset() {
   	this.link = null;
 	this.convertSub = null;
+	this.myStepper.previous();
+	const reset$ = this.http.post("/api/reset", {
+		responseType: 'json'
+	})
+	.pipe(
+		finalize(() => {})
+	);
+
+	const resetSub = reset$.subscribe((data: any) => {
+		console.log('data', data);
+	})
   }
 
 }

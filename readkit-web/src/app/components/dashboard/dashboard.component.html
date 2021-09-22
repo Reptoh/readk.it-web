@@ -61,7 +61,7 @@
                 <span *ngIf="item.key !== 'cover'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
               </div>
             </div>
-            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button (click)="back()">Back</button>
             <button class="btn btn-success" (click)="convert()">Convert</button>
           </div>
         </mat-step>
