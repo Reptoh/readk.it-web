@@ -147,7 +147,7 @@ function getNavType() {
 	  fs
 	    .readFile("./readkit.epub/OEBPS/toc.xhtml", function (err, data) {
 	      if (err) 
-	        return reject(err);
+	        return resolve('None');
 	      parser
 	        .parseString(data, function (err, result) {
 	          try {
