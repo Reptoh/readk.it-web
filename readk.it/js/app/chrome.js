@@ -124,7 +124,7 @@ define([
         });
 
         document.title = layout.publication.title;
-        $('.readkit-title span').text(layout.publication.title);
+        // $('.readkit-title span').text(layout.publication.title);
 
         // For file URLs, where the user has most likely double-clicked the index.html
         // show the drag and drop dialogue, as no publication has been loaded.

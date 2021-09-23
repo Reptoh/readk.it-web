@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
@@ -19,6 +19,8 @@ export class FileUploadComponent {
 
 	@Output()
 	metadataUpdateEvent = new EventEmitter<any>();
+
+	@ViewChild('fileInput') private fileUpload!: ElementRef;
 
 	fileName = '';
 	uploadProgress:any = 0;
@@ -75,6 +77,9 @@ export class FileUploadComponent {
   reset() {
 	this.uploadProgress = null;
 	this.uploadSub = null;
+	this.fileName = '';
+	this.fileUpload.nativeElement.value = '';
+	console.log('reset!');
   }
 
   // openLink() {

@@ -1,10 +1,12 @@
-import { Component, OnInit, NgZone, ViewChild } from '@angular/core';
+import { Component, OnInit, NgZone, ViewChild, EventEmitter } from '@angular/core';
 import { AuthService } from "../../shared/services/auth.service";
 import { Router } from "@angular/router";
 import { MatStepper } from '@angular/material/stepper';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+
+import { FileUploadComponent } from '../../file-upload/file-upload.component';
 
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
@@ -17,6 +19,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 export class DashboardComponent implements OnInit {
 
 	@ViewChild('stepper') private myStepper!: MatStepper;
+
+	@ViewChild('fileUpload') private fileUpload!: FileUploadComponent;
+
+	private resetFile = new EventEmitter<any>();
 
 	metaData: any;
 	isShowBusy: boolean = false;
@@ -86,6 +92,7 @@ export class DashboardComponent implements OnInit {
   }
 
   reset() {
+  	this.fileUpload.reset();
   	this.link = null;
 	this.convertSub = null;
 	this.myStepper.previous();
