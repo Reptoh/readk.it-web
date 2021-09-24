@@ -109,7 +109,7 @@ function onFileupload(req, res) {
 		  if(code === 0) {
 
 		  	epubParser.parse(inputDir + file.name, 'readkit.epub/' , book => {
-		  		getNavType().then(result => {
+		  		getNavType(book.navLink).then(result => {
 		  			book.toc = result;
 		  			console.log(book);
 				    res.setHeader('Content-Type', 'application/json');
@@ -142,12 +142,12 @@ function onReset(req, res) {
 	});
 }
 
-function getNavType() {
+function getNavType(navLink) {
 	return new Promise(function (resolve, reject) {
 	  fs
-	    .readFile("./readkit.epub/OEBPS/toc.xhtml", function (err, data) {
+	    .readFile("./readkit.epub/OEBPS/" + navLink, function (err, data) {
 	      if (err) 
-	        return resolve('None');
+	        return resolve('Toc file not found');
 	      parser
 	        .parseString(data, function (err, result) {
 	          try {

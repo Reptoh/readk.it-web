@@ -58,7 +58,7 @@
             <h3>EPUB INFORMATION (Not Editable)</h3>
             <div class="jumbotron">
               <div *ngFor="let item of metaData | keyvalue ">
-                <span *ngIf="item.key !== 'cover'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
+                <span *ngIf="item.key !== 'cover' && item.key !== 'navLink'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
               </div>
             </div>
             <button mat-button (click)="back()">Back</button>
