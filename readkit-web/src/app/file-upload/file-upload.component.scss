@@ -7,3 +7,13 @@
         margin: 5px;
     }
 }
+
+.progress-wrapper {
+	display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .progress-bar {
+    	width: 200px;
+    }
+}

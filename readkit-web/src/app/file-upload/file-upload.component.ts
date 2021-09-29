@@ -24,7 +24,7 @@ export class FileUploadComponent {
 
 	fileName = '';
 	uploadProgress:any = 0;
-	uploadSub: any;
+	uploadSub!: Subscription;
 	isShowBusy: boolean = false;
 	link!: string;
 	uploadedFileName!: string;
@@ -40,30 +40,48 @@ export class FileUploadComponent {
 			this.fileName = file.name;
 			const formData = new FormData();
 			formData.append("thumbnail", file);
-			this.isShowBusy = true;
 
 			const upload$ = this.http.post("/api/upload", formData, {
-				responseType: 'json'
-			})
-			.pipe(
-				finalize(() => {
-					this.isShowBusy = false;
-					this.reset();
-				})
-			);
+                reportProgress: true,
+                observe: 'events'
+            })
+            .pipe(
+                finalize(() => this.reset())
+            );
+          
+            this.uploadSub = upload$.subscribe((event: any) => {
+              if (event.type == HttpEventType.UploadProgress) {
+                this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+              }
+              if (event.type == HttpEventType.Response) {
+				console.log('event', event);
+				this.sharedData.setMetadata(event.body);
+				this.metadataUpdateEvent.emit(event.body);
+              }
+            })
 
-			this.uploadSub = upload$.subscribe((data: any) => {
-				console.log('data', data);
-				this.sharedData.setMetadata(data);
-				this.metadataUpdateEvent.emit(data);
-				// this.reset();
-				// const blob = new Blob([data], {
-				// 	type: 'application/zip'
-			 // 	});
-				// const url = window.URL.createObjectURL(blob);
-				// this.link = url;
-				// window.open(url); 
-			})
+			// const upload$ = this.http.post("/api/upload", formData, {
+			// 	responseType: 'json'
+			// })
+			// .pipe(
+			// 	finalize(() => {
+			// 		this.isShowBusy = false;
+			// 		this.reset();
+			// 	})
+			// );
+
+			// this.uploadSub = upload$.subscribe((data: any) => {
+			// 	console.log('data', data);
+			// 	this.sharedData.setMetadata(data);
+			// 	this.metadataUpdateEvent.emit(data);
+			// 	// this.reset();
+			// 	// const blob = new Blob([data], {
+			// 	// 	type: 'application/zip'
+			//  // 	});
+			// 	// const url = window.URL.createObjectURL(blob);
+			// 	// this.link = url;
+			// 	// window.open(url); 
+			// })
 
 
 		}
@@ -76,7 +94,6 @@ export class FileUploadComponent {
 
   reset() {
 	this.uploadProgress = null;
-	this.uploadSub = null;
 	this.fileName = '';
 	this.fileUpload.nativeElement.value = '';
 	console.log('reset!');

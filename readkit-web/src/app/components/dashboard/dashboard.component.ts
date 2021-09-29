@@ -97,7 +97,7 @@ export class DashboardComponent implements OnInit {
 	this.convertSub = null;
 	this.myStepper.previous();
 	const reset$ = this.http.post("/api/reset", {
-		responseType: 'json'
+		responseType: 'text'
 	})
 	.pipe(
 		finalize(() => {})

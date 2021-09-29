@@ -135,9 +135,8 @@ function onReset(req, res) {
 	child.on('close', (code) => {
 	  console.log(`child process exited with code ${code}`);
 	  if(code === 0) {
-	  	res.setHeader('Content-Type', 'application/json');
 	    res.sendStatus(200);
-	    res.end();
+	    res.json();
 	  }
 	});
 }
