@@ -682,7 +682,7 @@ pre {
 }
 
 /*Temporary fix for styles*/
-.readkit-margins div > div:first-child > ._idGenObjectAttribute-1 {
+.readkit-margins div > div:first-child > ._idGenObjectAttribute-2 {
   position: relative;
   z-index: 10;
 }
