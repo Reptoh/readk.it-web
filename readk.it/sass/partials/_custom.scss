@@ -67,6 +67,12 @@ $slider-width: 30px;
 
 .#{$namespace}-margins {
     margin: 0 $margin;
+    height: 100%;
+    position: relative;
+
+    div {
+        height: 100%;
+    }
 }
 
 // ==========================================================================//
@@ -121,11 +127,12 @@ $slider-width: 30px;
 }
 
 .#{$namespace}-scroller {
-    position: absolute;
+    position: relative;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     width: 100%;
     padding: 0;
     z-index: 1;
+    height: 100%;
 }
 
 // ==========================================================================//
@@ -500,6 +507,24 @@ and (max-device-width : 1024px)  {
 
 /*Temporary fix for styles*/
 .readkit-margins div > div:first-child > ._idGenObjectAttribute-2 {
-  position: relative;
-  z-index: 10;
+  z-index: 15;
+}
+
+.readkit-margins div > div:first-child > ._idGenObjectAttribute-1 {
+  height: 100%;
+}
+
+._idGenObjectAttribute-1 {
+    min-width: auto !important;
+    width: auto !important;
+}
+
+.readkit-margins div > div > img {
+      height: 100%;
+      min-width: auto !important;
+      width: auto !important;
+}
+
+.readkit-margins div > div {
+  height: 100%;
 }
