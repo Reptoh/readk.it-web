@@ -109,9 +109,16 @@ function onFileupload(req, res) {
 		  if(code === 0) {
 
 		  	epubParser.parse(inputDir + file.name, 'readkit.epub/' , book => {
+				var ext = book.fileName.lastIndexOf('.');
+				var dirname = book.fileName.substring(0, ext);
+				fs.rmdirSync(dirname, { recursive: true, force: true });
 		  		getNavType(book.navLink).then(result => {
 		  			book.toc = result;
-		  			console.log(book);
+					console.log(book);
+				    res.setHeader('Content-Type', 'application/json');
+				    res.end(JSON.stringify(book));
+		  		}).catch(error => {
+		  			book.toc = "Error parsing toc file";
 				    res.setHeader('Content-Type', 'application/json');
 				    res.end(JSON.stringify(book));
 		  		});
@@ -135,8 +142,9 @@ function onReset(req, res) {
 	child.on('close', (code) => {
 	  console.log(`child process exited with code ${code}`);
 	  if(code === 0) {
+	  	res.setHeader('Content-Type', 'application/json');
 	    res.sendStatus(200);
-	    res.json();
+	    res.end();
 	  }
 	});
 }
@@ -153,7 +161,6 @@ function getNavType(navLink) {
 	            var jsondata = JSON.parse(JSON.stringify(result));
 	            var toc = _.filter(jsondata.html.body[0].nav, (i) => i["$"]["epub:type"] === "toc");
 	            var pageList = _.filter(jsondata.html.body[0].nav, (i) => i["$"]["epub:type"] === "page-list");
-
 	            if(toc[0].ol[0].li.length > 1) {
 	            	return resolve('Index');
 	            }
@@ -166,7 +173,8 @@ function getNavType(navLink) {
 	            	return resolve('None');
 	            }
 	    	  } catch (err) {
-	            return reject(err)
+	    	  	console.log('Error parsing toc file', err);
+	            return reject(err);
 	          }
 	        });
 	    });

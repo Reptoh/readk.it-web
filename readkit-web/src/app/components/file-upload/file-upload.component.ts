@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef }
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { SharedDataService } from '../shared/services/sharedData.service'
+import { SharedDataService } from '../../shared/services/sharedData.service'
 
 
 
@@ -59,31 +59,6 @@ export class FileUploadComponent {
 				this.metadataUpdateEvent.emit(event.body);
               }
             })
-
-			// const upload$ = this.http.post("/api/upload", formData, {
-			// 	responseType: 'json'
-			// })
-			// .pipe(
-			// 	finalize(() => {
-			// 		this.isShowBusy = false;
-			// 		this.reset();
-			// 	})
-			// );
-
-			// this.uploadSub = upload$.subscribe((data: any) => {
-			// 	console.log('data', data);
-			// 	this.sharedData.setMetadata(data);
-			// 	this.metadataUpdateEvent.emit(data);
-			// 	// this.reset();
-			// 	// const blob = new Blob([data], {
-			// 	// 	type: 'application/zip'
-			//  // 	});
-			// 	// const url = window.URL.createObjectURL(blob);
-			// 	// this.link = url;
-			// 	// window.open(url); 
-			// })
-
-
 		}
 	}
 
@@ -98,8 +73,4 @@ export class FileUploadComponent {
 	this.fileUpload.nativeElement.value = '';
 	console.log('reset!');
   }
-
-  // openLink() {
-	 //  window.open(this.link); 
-  // }
 }

@@ -6,7 +6,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
-import { FileUploadComponent } from '../../file-upload/file-upload.component';
+import { FileUploadComponent } from '../file-upload/file-upload.component';
 
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
@@ -38,7 +38,6 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-  	console.log("this.authService.isLoggedIn", this.authService.isLoggedIn);
   	const user = JSON.parse(localStorage.getItem('user')!);
   	if(!user || user === null) {
   		this.router.navigate(['sign-in']);
@@ -71,8 +70,6 @@ export class DashboardComponent implements OnInit {
 			);
 
 			this.convertSub = convert$.subscribe((data: any) => {
-				console.log('convert data', data);
-				// this.reset();
 				const blob = new Blob([data], {
 					type: 'application/zip'
 			 	});
@@ -102,10 +99,6 @@ export class DashboardComponent implements OnInit {
 	.pipe(
 		finalize(() => {})
 	);
-
-	const resetSub = reset$.subscribe(data => {
-		// console.log('data', data);
-	})
   }
 
 }

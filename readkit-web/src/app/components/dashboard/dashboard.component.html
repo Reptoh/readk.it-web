@@ -35,10 +35,7 @@
         <mat-step>
           <ng-template matStepLabel>Upload file</ng-template>
           <div class="inner-adjust">
-            <!-- <div class="pt-2 pb-2 mb-3 border-bottom">
-              <h1 class="h2">File converter</h1>
-            </div> -->
-            <!-- Show user data when logged in -->
+            <!-- Show file uploader when logged in -->
             <div class="row" *ngIf="authService.userData as user">
               <div class="col-md-12">
                 <div class="media">
@@ -58,13 +55,17 @@
             <h3>EPUB INFORMATION (Not Editable)</h3>
             <div class="jumbotron">
               <div *ngFor="let item of metaData | keyvalue ">
-                <span *ngIf="item.key !== 'cover' && item.key !== 'navLink'"><b class="keys">{{item.key}}:</b> {{item.value}} </span>
+                <span *ngIf="item.key !== 'cover' && item.key !== 'navLink'">
+                  <b *ngIf="item.key === 'identifier'" class="keys">ISBN:</b> {{item.value}}
+                  <b *ngIf="item.key !== 'identifier'" class="keys">{{item.key}}:</b> {{item.value}}
+                </span>
               </div>
             </div>
             <button mat-button (click)="back()">Back</button>
             <button class="btn btn-success" (click)="convert()">Convert</button>
           </div>
         </mat-step>
+        <!-- Final step -->
         <mat-step>
           <ng-template matStepLabel>Done</ng-template>
           <div class="last-step">
