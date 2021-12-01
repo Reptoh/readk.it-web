@@ -56,8 +56,8 @@
             <div class="jumbotron">
               <div *ngFor="let item of metaData | keyvalue ">
                 <span *ngIf="item.key !== 'cover' && item.key !== 'navLink'">
-                  <b *ngIf="item.key === 'identifier'" class="keys">ISBN:</b> {{item.value}}
-                  <b *ngIf="item.key !== 'identifier'" class="keys">{{item.key}}:</b> {{item.value}}
+                  <span *ngIf="item.key === 'identifier'"><b class="keys">ISBN:</b> {{item.value}}</span>
+                  <span *ngIf="item.key !== 'identifier'"><b class="keys">{{item.key}}:</b> {{item.value}}</span>
                 </span>
               </div>
             </div>
