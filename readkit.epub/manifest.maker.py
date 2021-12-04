@@ -23,20 +23,23 @@ comma = ''
 
 def printer(name, version, identifier, path, pages, cover):
     # {"name": "At the Bay", "version": "2.0", identifier": "12345678", "total_pages": 13}
-    print "{\"name\": \"%(name)s\", \"version\": \"%(version)s\", \"identifier\": \"%(identifier)s\", \"path\": \"%(path)s\", \"total_pages\": %(pages)s, \"cover\": \"%(cover)s\", \"solo\": \"%(solo)s\"}" % {'name': name, 'version': version, 'identifier': identifier, 'path': path, 'pages': pages, 'cover': cover, 'solo': identifier.replace(':', '_') + '_' + re.sub('[^a-z\d]', '_', name.lower()) + '.html'}
+    print ("{\"name\": \"%(name)s\", \"version\": \"%(version)s\", \"identifier\": \"%(identifier)s\", \"path\": \"%(path)s\", \"total_pages\": %(pages)s, \"cover\": \"%(cover)s\", \"solo\": \"%(solo)s\"}" % {'name': name, 'version': version, 'identifier': identifier, 'path': path, 'pages': pages, 'cover': cover, 'solo': identifier.replace(':', '_') + '_' + re.sub('[^a-z\d]', '_', name.lower()) + '.html'})
 
 def parseInfo(r, f):
     try:
-        f = open(os.path.join(r, f)).read()
+        xml = open(os.path.join(r, f))
+        f = xml.read()
     except:
         print("The %s file is not a valid OCF." % str(os.path.join(r, f)))
     try:
-        f = ET.fromstring(f)
+        f = ET.fromstring(bytes(f, encoding='utf-8'))
         info["path_to_opf"] = r + "/../" + f[0][0].get("full-path")
         info["root_folder"] = os.path.dirname(info["path_to_opf"])
-    except:
-        pass
-    opf = ET.fromstring(open(info["path_to_opf"]).read())
+    except Exception as e: print(e)
+        # pass
+    try:
+        opf = ET.fromstring(bytes(open(info["path_to_opf"]).read(), encoding='utf-8'))
+    except Exception as e: print(e)
 
     id = opf.xpath("//opf:spine", namespaces=namespaces)[0].get("toc")
     expr = "//*[@id='%s']" % id
@@ -58,17 +61,16 @@ def parseInfo(r, f):
 
 def parseOPF(r, f):
     parseInfo(r, f)
-    opf = ET.fromstring(open(info["path_to_opf"]).read())
+    opf = ET.fromstring(bytes(open(info["path_to_opf"]).read(), encoding='utf-8'))
 
     return opf
 
 
-print "["
+print ("[")
 for r, d, files in os.walk("."):
     files = [f for f in files if re.match('container.xml', f)]
     for f in files:
         if f.endswith(".xml"):
-
             opf = parseOPF(r, f)
 
             title = opf.xpath("//dc:title", namespaces=namespaces)
@@ -101,7 +103,7 @@ for r, d, files in os.walk("."):
 
             cover = re.sub(r'\\', r"/", cover)
 
-            print comma
-            printer(title[0].text.encode('utf-8'), version[0], identifier[0].text, path, pages, cover)
+            print (comma)
+            printer(title[0].text.encode().decode('utf-8'), version[0], identifier[0].text, path, pages, cover)
             comma = ','
-print "]"
+print ("]")

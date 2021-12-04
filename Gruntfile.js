@@ -410,7 +410,7 @@ module.exports = function(grunt) {
       make_manifest: {
         command: [
           'cd <%= epub_src %>',
-          'python manifest.maker.py > manifest.json',
+          'python3 manifest.maker.py > manifest.json',
           'echo Created manifest: manifest.json'
         ].join('&&'),
         options: {
@@ -422,7 +422,7 @@ module.exports = function(grunt) {
         // Create our manifest describing the EPUB files
         command: [
           'cd <%= epub_src %>',
-          'python manifest.maker.py > manifest.json',
+          'python3 manifest.maker.py > manifest.json',
           'echo Created manifest: manifest.json'
         ].join('&&'),
         options: {
@@ -435,7 +435,7 @@ module.exports = function(grunt) {
         // Create our manifest describing the EPUB files
         command: [
           'cd <%= epub_src %>',
-          'python manifest.maker.py > manifest.json',
+          'python3 manifest.maker.py > manifest.json',
           'echo Created manifest: manifest.json'
         ].join('&&'),
         options: {
@@ -483,6 +483,8 @@ module.exports = function(grunt) {
               'css': 'require-css/css'
             }
           },
+          optimize: "uglify",
+          generateSourceMaps: false,
           shim: {
               // Shim in any files that aren't AMD modules
               'jquery.storage': ['jquery'],

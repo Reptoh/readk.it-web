@@ -6,8 +6,9 @@ RUN cd readkit-web && npm install @angular/cli && npm install && npm run build
 
 FROM node:14-alpine AS server-build
 WORKDIR /root/
-
+RUN export NODE_OPTIONS=--max_old_space_size=10000
 RUN apk update \
+	&& apk upgrade \
 	&& apk add --no-cache \
 	autoconf \
 	automake \
@@ -19,8 +20,8 @@ RUN apk update \
 	zlib-dev \
 	zip \
     unzip \
-	python \
-	python-dev \
+	python3 \
+	python3-dev \
 	ruby \
 	ruby-bundler \
 	ruby-dev \
@@ -29,11 +30,11 @@ RUN apk update \
 	gcc \
 	libxslt-dev \
 	make \
-	py-pip \
+	py3-pip \
 	git \
 	&& rm -rf /var/lib/apk/*
 
-RUN pip install lxml
+RUN pip3 install lxml
 RUN gem update --system && gem install compass --no-document
 RUN npm install -g grunt
 
