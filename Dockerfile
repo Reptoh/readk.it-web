@@ -6,9 +6,8 @@ RUN cd readkit-web && npm install @angular/cli && npm install && npm run build
 
 FROM node:14-alpine AS server-build
 WORKDIR /root/
-RUN export NODE_OPTIONS=--max_old_space_size=10000
+ENV NODE_OPTIONS=--max_old_space_size=8096
 RUN apk update \
-	&& apk upgrade \
 	&& apk add --no-cache \
 	autoconf \
 	automake \

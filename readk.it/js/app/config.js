@@ -44,7 +44,7 @@ define({
     // if we forego:
     // * Drag and drop (not needed for mobile)
     // * Modernizr / Detectizr
-    lite: false,
+    lite: true,
 
     log: true,
 

@@ -11,19 +11,15 @@ define([
     'jquery',
     'app/utility',
     'app/config',
-    'zip/zip',
-    'zip/inflate',
     'iscroll',
     'lodash',
     'jquery.ba-resize',
     'jquery.noClickDelay',
     'jquery.ui.totop'
-], function($, utility, config, zip, inflate, IScroll, _){
+], function($, utility, config, IScroll, _){
 
     var controller;
     var layout;
-    var upload = {};
-    var progress_total = 0;
     var identifier;
 
     /* Constructor */
@@ -541,171 +537,6 @@ define([
             $('.readkit-status').removeClass('readkit-online');
         }
         $('.readkit-status').addClass(status);
-    }
-
-    $('.readkit-cancel_upload').on('click', function(e){
-        e.stopPropagation();
-        $('.readkit-drag-upload-window').slideUp('slow', function(){
-        $(".readkit-drag-upload-spinner").removeClass('loading');
-        });
-    });
-
-    upload.handle_drag_enter = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (! $('.readkit-drag-upload-window').is(':visible')) {
-            upload.initalise();
-        }
-
-        var epub_drag_upload = $("#readkit-epub-drag-upload")[0];
-        epub_drag_upload.addEventListener("drop", upload.prep_dropped_files_for_upload, false);
-        epub_drag_upload.addEventListener("dragover", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }, false);
-    };
-
-    upload.initalise = function () {
-        progress_total = 0;
-        $(".readkit-meter span").attr("style", "width:0%");
-        $(".readkit-epub-drag-upload-label").removeClass("loading").text("Drag an EPUB file into this space to start reading.");
-        $(".readkit-drag-upload-spinner").removeClass('loading');
-
-        $('.readkit-drag-upload-window').slideDown();
-    };
-
-    upload.prep_dropped_files_for_upload = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        var filelist = e.dataTransfer.files;
-        upload.upload_files(e, filelist);
-        return false;
-    };
-
-    upload.upload_files = function (e, filelist) {
-        var files = [];
-        filelist = filelist || $("#readkit-id_epub")[0].files;
-        if (filelist.length) {
-
-            // Chrome's (and now Firefox) security policies means webworkers are not allowed
-            // with file urls, therefore we have to put up with slower
-            // single-threaded zip inflation.
-            zip.useWebWorkers = location.protocol !== 'file:' && config.mode !== 'reader' && config.mode !== 'solo';
-
-            zip.workerScriptsPath = config.workerScriptsPath;
-            var f = filelist[0];
-            zip.createReader(new zip.BlobReader(f), function(zipReader){
-                zipReader.getEntries(function(entries){
-
-                    $.when.apply(this, $.map(entries, function(entry) {
-                        return $.Deferred(function(deferred_entry){
-
-                            if (utility.isTextFile(entry.filename)) {
-                                // This is a text-like file that we need to parse or load directly
-                                // into the browser, so store as text.
-                                try {
-                                    // There's an issue with zip.TextWriter failing silently in
-                                    // Firefox; we have to supply 'utf-8', and also wrap it in
-                                    // a try-catch block for good measure.
-                                    // https://github.com/gildas-lormeau/zip.js/issues/58
-                                    entry.getData(new zip.TextWriter('utf-8'), function(text){
-                                        upload.progress(f, entry);
-                                        if (config.log) {
-                                            utility.log(entry.filename);
-                                        }
-                                        deferred_entry.resolve(text);
-                                    });
-                                } catch (e) {
-                                    utility.log('zip.TextWriter failure with ' + entry.filename + ': ' + e);
-                                }
-                            } else {
-                                // Retrieve other files as blobs, i.e. don't uncompress them to text
-                                // as in a number of cases we'd simply have to recompress them
-                                // to display them (e.g. jpg) and that would be silly.
-                                entry.getData(new zip.BlobWriter(), function(blob){
-                                    upload.progress(f, entry);
-                                    if (config.log) {
-                                        utility.log(entry.filename);
-                                    }
-                                    deferred_entry.resolve(blob);
-                                });
-                            }
-
-                        }).done(function(value){
-                            var filename = entry.filename;
-                            files[filename] = value;
-                        });
-                    })).done(function(){
-                        upload.complete(100);
-                        setTimeout(function () {
-                            $('.readkit-drag-upload-window').slideUp('slow');
-                        }, 0);
-                        controller.initialise('', {}, files);
-                    });
-                });
-
-            }, upload.failed);
-            $(".readkit-epub-drag-upload-label").addClass("loading").text("Uploading EPUB...");
-            $(".readkit-drag-upload-spinner").addClass("loading");
-            return false;
-        }
-    };
-
-    upload.progress = function (f, entry) {
-        if (entry.compressedSize) {
-            var progress_file = Math.round(entry.compressedSize * 100 / f.size);
-            progress_total += progress_file;
-            $(".readkit-meter span").attr("style", "width:" + progress_total.toString() + "%");
-            if (progress_total <= 99) {
-                $(".readkit-epub-drag-upload-label").html("Unpacking EPUB...");
-            }
-        }
-    };
-
-    upload.complete = function (a) {
-    $(".readkit-meter span").attr("style", "width:" + a.toString() + "%");
-        $(".readkit-epub-drag-upload-label").text("Opening EPUB...");
-    };
-
-    upload.failed = function (a) {
-        //upload.show_error_message(a.toString());
-        utility.error(a.toString());
-    };
-
-    upload.cancelled = function (e) {
-        utility.debug("The upload has been canceled by the user or the browser dropped the connection.");
-    };
-/*     if ("FileReader" in window && Modernizr.draganddrop) { */
-    if ("FileReader" in window && !config.lite) {
-        $("#epub-upload p").show();
-        var drag_zone = $("#readkit-pageWrapper")[0];
-        drag_zone.addEventListener("dragenter", upload.handle_drag_enter, false);
-        var body = $("body")[0];
-        body.addEventListener("dragover", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        }, false);
-        body.addEventListener("drop", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            return false;
-        }, false);
-    }
-
-    if (window.location.protocol === 'file:') {
-        $('#readkit-sitePreloader').hide();
-    }
-
-    if (
-    ("standalone" in window.navigator) &&
-    window.navigator.standalone
-    ){
-        // Account for the status bar on iOS when in stand-alone mode.
-        // http://www.bennadel.com/blog/1950-Detecting-iPhone-s-App-Mode-Full-Screen-Mode-For-Web-Applications.htm
-        $('.readkit-header').css({'margin-top': '20px'});
-        $('#readkit-pageWrapper').css('top', '60px');
     }
 
     return (Chrome);

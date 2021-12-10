@@ -39,7 +39,7 @@ app.route('/api/reset').post(onReset);
 app.route('/api/convert').post(convert);
 
 function convert(req, res) {
-	var child = spawn('grunt', ['default'], { shell: true });
+	var child = spawn('grunt', ['convert'], { shell: true });
   	child.stdout.on('data', (data) => {
 	  console.log(`stdout: ${data}`);
 	});

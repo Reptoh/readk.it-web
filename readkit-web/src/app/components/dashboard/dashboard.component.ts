@@ -47,6 +47,9 @@ export class DashboardComponent implements OnInit {
 
   setMeta(meta:any) {
   	this.metaData = meta;
+	if(this.metaData && this.metaData.identifier)
+		this.metaData.identifier = this.metaData.identifier.replace(/\:|\.|\s/g, '_');
+	
   	this.myStepper.next();
   }
 

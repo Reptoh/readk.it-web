@@ -31,9 +31,7 @@ var shims = {
     'jquery.noClickDelay': ['jquery'],
     'jquery.ui.totop': ['jquery'],
     // Make non-AMD modules available globally
-    'iscroll': {exports: 'iScroll'},
-    'zip/zip': {exports: 'zip'},
-    'zip/inflate': {exports: 'inflate'},
+    'iscroll': {exports: 'iScroll'}
 };
 try {
     if (client && client.shims) {
@@ -59,12 +57,12 @@ require.config({
 });
 
 // Add to home screen: http://cubiq.org/add-to-home-screen
-var addToHomeConfig = {
-    startDelay: 30000,
-    lifespan:10000,
-    touchIcon:false,
-    message:'Install this book on your %device: tap %icon and then <strong>Add to Home Screen</strong>.'
-};
+// var addToHomeConfig = {
+//     startDelay: 30000,
+//     lifespan:10000,
+//     touchIcon:false,
+//     message:'Install this book on your %device: tap %icon and then <strong>Add to Home Screen</strong>.'
+// };
 
 // Readk.it required top-level modules
 var required = ['jquery', 'app/controller', 'app/config', 'app/content', 'add-to-homescreen/src/add2home'];

@@ -85,13 +85,6 @@ module.exports = function(grunt) {
         '.sass-cache',
         'data/input/*.epub',
         'data/input/*',
-        // 'readkit.epub/image/',
-        // 'readkit.epub/META-INF/',
-        // 'readkit.epub/OEBPS/',
-        // 'readkit.epub/mimetype',
-        // 'readkit.epub/manifest.json',
-        // 'readkit.epub/**/*',
-        // '!readkit.epub/manifest.maker.py',
       ]
     },
 
@@ -256,10 +249,6 @@ module.exports = function(grunt) {
         }
       }
     },
-
-    //nodeunit: {
-    //  files: ['test/**/*_test.js']
-    //},
 
     copy: {
       content_js_to_build: {
@@ -477,13 +466,13 @@ module.exports = function(grunt) {
               'app/content',
               'add-to-homescreen/src/add2home',
           ],
+          logLevel: 3,
           out: 'build/readkit.js',
           map: {
             '*': {
               'css': 'require-css/css'
             }
           },
-          optimize: "uglify",
           generateSourceMaps: false,
           shim: {
               // Shim in any files that aren't AMD modules
@@ -492,11 +481,9 @@ module.exports = function(grunt) {
               'jquery.ba-resize': ['jquery'],
               'jquery.hotkeys': ['jquery'],
               // Make certain non-AMD modules available globally
-              'modernizr': {deps: ['jquery'], exports: 'Modernizr'},
-              'detectizr': {deps: ['jquery', 'modernizr'], exports: 'Detectizr'},
-              'iscroll': {exports: 'iScroll'},
-              'zip/zip': {exports: 'zip'},
-              'zip/inflate': {exports: 'inflate'},
+              // 'modernizr': {deps: ['jquery'], exports: 'Modernizr'},
+              // 'detectizr': {deps: ['jquery', 'modernizr'], exports: 'Detectizr'},
+              'iscroll': {exports: 'iScroll'}
           }
         }
       },
@@ -589,7 +576,8 @@ module.exports = function(grunt) {
     for (var entry in manifest) {
 
       // Certain characters found in the EPUB id cause problems for grunt
-      var identifier = manifest[entry].identifier.replace(/\:|\./g, '_');
+      var identifier = manifest[entry].identifier.replace(/\:|\.|\s/g, '_');
+      
       var name = manifest[entry].name.replace(/[^a-z\d]/gi, '_').toLowerCase();
       var path = manifest[entry].path;
       var cover = manifest[entry].cover;
@@ -627,16 +615,6 @@ module.exports = function(grunt) {
       var oebps_path_dest = 'dist/readkit.epub/' + path + '<%= readkit_dom_munger.data.oebpsRef %>';
 
       var solo_path_dest = 'dist/readkit.solo/<%= epub_src %>/' + path;
-
-      // Unzip epub file
-      // grunt.config('unzip.epub', {
-      //   'long-format': {
-      //     // Note: If you provide multiple src files, they will all be extracted to the same folder.
-      //     // This is not well-tested behavior so use at your own risk.
-      //     src: 'input/*.epub',
-      //     dest: 'readkit.epub/'
-      //   }
-      // });
 
       // Read the manifest entries from the opf file
       grunt.config('readkit_dom_munger.' + identifier + '_opf', {
@@ -712,10 +690,7 @@ module.exports = function(grunt) {
             expand: true,
             cwd: 'dist/readkit.solo/',
             src: ['**/*.zip'],
-            dest: 'data/output/',
-            // rename: function(dest, src) {
-            //   return dest + manifest[entry].name + '.zip';
-            // }
+            dest: 'data/output/'
           }
         ]
       });
@@ -1114,7 +1089,24 @@ module.exports = function(grunt) {
         'library_dist_appcache_date',
         'readkit_dom_munger:index_library',
         'readkit_dom_munger:library',
-        'copy:library_client_config_to_dist'];
+        'copy:library_client_config_to_dist'
+      ];
+
+      var convertTasks = [
+        'clean:before',
+        'compass:readkit',
+        'copy:readkit_prod_to_build',
+        'jshint:readkit',
+        'cssmin:readkit',
+        'concat:readkit',
+        'imageEmbed:build',
+        'config_mode_reader',
+        'requirejs:compile_readkit',
+        'readkit_dom_munger:index_reader',
+        'bake:reader',
+        'config_mode_publication',
+        'requirejs:compile_readkit'
+      ];
 
       // Prod lite tasks that happen before the EPUBs have been processed
       var prodLiteTasks = [
@@ -1162,7 +1154,7 @@ module.exports = function(grunt) {
       // Process our manifest -- each entry in the manifest describes a particular EPUB file
       for (var entry in manifest) {
         grunt.log.writeln(manifest[entry].path);
-        var identifier = manifest[entry].identifier.replace(/\:|\./g, '_');
+        var identifier = manifest[entry].identifier.replace(/\:|\.|\s/g, '_');
 
         // Ensure that drag-and-drop unzip can find the web worker
         grunt.registerTask(identifier + '_config_prod', 'Configure location of the webworkers (for drag and drop)', function(){
@@ -1277,6 +1269,42 @@ module.exports = function(grunt) {
           'copy:' + identifier + '_readkit_to_volume'
 
         ];
+        var tasksForConverting = [
+          'clean:build_readkit',
+          'copy:readkit_prod_to_build',
+          'cssmin:readkit',
+          'concat:readkit',
+          'imageEmbed:build',
+          'config_mode_publication',
+          'readkit_dom_munger:' + identifier + '_metaInf',
+          'readkit_dom_munger:' + identifier + '_oebps',
+          'readkit_dom_munger:' + identifier + '_opf',
+          'readkit_dom_munger:' + identifier + '_opf_html',
+          'imagemin:' + identifier + '_compress_images',
+          'copy:' + identifier + '_epub_to_dist',
+          identifier + '_config_prod',
+          'clean:build_readkit_js',
+          'requirejs:compile_readkit',
+          'copy:' + identifier + '_readkit_prod_to_dist',
+          'copy:' + identifier + '_readkit_assets_to_dist',
+          'copy:' + identifier + '_client_config_to_dist',
+          'readkit_dom_munger:' + identifier + '_readkit_index',
+          'readkit_dom_munger:' + identifier + '_opf_mixin_prod',
+          'shell:' + identifier + '_zip',
+          'shell:' + identifier + '_mv',
+          'config_mode_solo',
+          identifier + '_client_scripts_to_build',
+          'copy:' + identifier + '_client_config_to_build',
+          'readkit_datauris:' + identifier,
+          identifier + '_mixin_client_config',
+          'readkit_data_uri:solo',
+          'readkit_dom_munger:' + identifier + '_solo_index',
+          'bake:' + identifier + '_solo',
+          'copy:' + identifier + '_solo_index_to_dist',
+          'shell:' + identifier + '_zip_solo',
+          'readme_solo'
+        ];
+        convertTasks = convertTasks.concat(tasksForConverting);
         prodTasks = prodTasks.concat(tasksForProd);
         prodLiteTasks = prodLiteTasks.concat(tasksForProd);
 
@@ -1302,6 +1330,7 @@ module.exports = function(grunt) {
       // Tasks that happen after the EPUBs have been processed
       var afterTasks = ['readme_epub', 'readme_library', 'readme_reader', 'clean:after'];
       prodTasks = prodTasks.concat(afterTasks);
+      convertTasks = convertTasks.concat(afterTasks);
       prodLiteTasks = prodLiteTasks.concat(afterTasks);
       devTasks = devTasks.concat(afterTasks);
 
@@ -1311,6 +1340,9 @@ module.exports = function(grunt) {
           break;
         case 'prod_lite':
           grunt.task.run(prodLiteTasks);
+          break;
+        case 'convert':
+          grunt.task.run(convertTasks);
           break;
         default:
           // Fallback to running prod tasks if no target specified
@@ -1424,6 +1456,5 @@ For more information, visit the [Readk.it home page](http://readk.it)
 
   grunt.registerTask('default', ['unzip', 'shell:make_manifest_prod']);
   grunt.registerTask('dev', ['unzip', 'shell:make_manifest_dev']);
-  // grunt.registerTask('server', ['nodemon']);
-  // grunt.registerTask('output', ['copy:readkit_to_volume']);
+  grunt.registerTask('convert', ['unzip', 'shell:make_manifest_prod']);
 };
