@@ -1104,8 +1104,7 @@ module.exports = function(grunt) {
         'requirejs:compile_readkit',
         'readkit_dom_munger:index_reader',
         'bake:reader',
-        'config_mode_publication',
-        'requirejs:compile_readkit'
+        'config_mode_publication'
       ];
 
       // Prod lite tasks that happen before the EPUBs have been processed
@@ -1284,7 +1283,6 @@ module.exports = function(grunt) {
           'copy:' + identifier + '_epub_to_dist',
           identifier + '_config_prod',
           'clean:build_readkit_js',
-          'requirejs:compile_readkit',
           'copy:' + identifier + '_readkit_prod_to_dist',
           'copy:' + identifier + '_readkit_assets_to_dist',
           'copy:' + identifier + '_client_config_to_dist',

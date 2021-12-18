@@ -10,11 +10,10 @@
 define([
     'app/config',
     'jquery',
-    'jquery.storage',
     'tinytim',
     'modernizr',
     'detectizr'
-], function(config, $, $storage, tinytim, Modernizr, Detectizr){
+], function(config, $, tinytim, Modernizr, Detectizr){
 
     var isTextFile = function(filename){
         var suffix = filename.lastIndexOf('.') === -1 ? '' : filename.substr(filename.lastIndexOf('.') + 1).toLowerCase();

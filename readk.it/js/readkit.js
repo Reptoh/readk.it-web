@@ -56,14 +56,6 @@ require.config({
     shim: shims
 });
 
-// Add to home screen: http://cubiq.org/add-to-home-screen
-// var addToHomeConfig = {
-//     startDelay: 30000,
-//     lifespan:10000,
-//     touchIcon:false,
-//     message:'Install this book on your %device: tap %icon and then <strong>Add to Home Screen</strong>.'
-// };
-
 // Readk.it required top-level modules
 var required = ['jquery', 'app/controller', 'app/config', 'app/content', 'add-to-homescreen/src/add2home'];
 

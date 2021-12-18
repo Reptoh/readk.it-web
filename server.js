@@ -47,8 +47,13 @@ function convert(req, res) {
 	child.stderr.on('data', (data) => {
 	  console.error(`stderr: ${data}`);
 	});
+
+	child.on('error', (error) => {
+		console.log('error', error);
+	});
 	  
-	child.on('close', (code) => {
+	child.on('close', (code, signal) => {
+	  console.log('signal', signal);
 	  console.log(`child process exited with code ${code}`);
 	  if(code === 0) {
 	  	fs.readdir(outputDir, function (err, files) {

@@ -33,7 +33,6 @@ export class FileUploadComponent {
 				private sharedData: SharedDataService) {}
 
 	onFileSelected(event:any) {
-		console.log('onFileSelected',event);
 		const file:File = event.target.files[0];
 	  	this.link = '';
 		if (file) {
@@ -54,7 +53,6 @@ export class FileUploadComponent {
                 this.uploadProgress = Math.round(100 * (event.loaded / event.total));
               }
               if (event.type == HttpEventType.Response) {
-				console.log('event', event);
 				this.sharedData.setMetadata(event.body);
 				this.metadataUpdateEvent.emit(event.body);
               }
@@ -71,6 +69,5 @@ export class FileUploadComponent {
 	this.uploadProgress = null;
 	this.fileName = '';
 	this.fileUpload.nativeElement.value = '';
-	console.log('reset!');
   }
 }
